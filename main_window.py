@@ -5,7 +5,9 @@ from Search import *
 
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton
 from PyQt5.QtWidgets import QLabel, QLineEdit, QPlainTextEdit, QCheckBox
-from PyQt5.QtGui import QPixmap, QFont
+from PyQt5.QtGui import QPixmap, QFont, QPainter
+from PyQt5.QtCore import Qt
+from PyQt5 import QtGui
 
 SCREEN_SIZE = 600, 450
 
@@ -19,7 +21,7 @@ class Example(QWidget):
         self.setGeometry(100, 100, SCREEN_SIZE[0], SCREEN_SIZE[1])
         self.setWindowTitle('Мапи')
 
-        self.delta = '0.005'
+        self.delta = 0.005
 
         self.ll = ['2.294986', '48.858141']
 
@@ -33,7 +35,7 @@ class Example(QWidget):
         pass
 
     def getImage(self):
-        response = paint(self.ll, self.delta)
+        response = paint(self.ll, str(self.delta))
 
         if not response:
             print("Ошибка выполнения запроса:")
@@ -51,17 +53,38 @@ class Example(QWidget):
             self.setWindowTitle('Отображение карты')
 
             ## Изображение
-            self.pixmap = QPixmap(self.map_file)
-            self.image = QLabel(self)
-            self.image.move(0, 0)
-            '''self.image.resize(*SCREEN_SIZE)'''
-            self.image.setPixmap(self.pixmap)
+            painter = QPainter(self)
+            pixmap = QPixmap(self.map_file)
+            painter.drawPixmap(self.rect(), pixmap)
+
+            self.show()
+
         except Example as e:
             print(e)
 
     def closeEvent(self, event):
         """При закрытии формы подчищаем за собой"""
         os.remove(self.map_file)
+
+    def keyPressEvent(self, event):
+        try:
+            if event.key() == Qt.Key_PageUp:
+                if self.delta > 0:
+                    self.delta -= 0.001
+
+            if event.key() == Qt.Key_PageDown:
+                if self.delta < 80:
+                    self.delta += 0.005
+
+            print(self.delta)
+
+            self.getImage()
+
+        except Example as e:
+            print(e)
+
+    def paintEvent(self, a0: QtGui.QPaintEvent):
+        self.initUI()
 
 
 if __name__ == '__main__':

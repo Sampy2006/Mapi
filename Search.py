@@ -25,4 +25,6 @@ def paint(address_ll, delta, l='sat', point=False):
     # ... и выполняем запрос
     response = requests.get(map_api_server, params=map_params)
 
+    print("Http статус:", response.status_code, "(", response.reason, ")")
+
     return response
