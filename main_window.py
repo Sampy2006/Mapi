@@ -10,6 +10,9 @@ from PyQt5.QtGui import QPixmap, QFont
 SCREEN_SIZE = 600, 450
 
 
+# print('Hello, world!')
+
+
 class Example(QWidget):
     def __init__(self):
         super().__init__()
